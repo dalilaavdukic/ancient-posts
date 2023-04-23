@@ -1,4 +1,9 @@
-<div class="card mb-2">
+<div
+  class="card mb-2"
+  [ngClass]="{
+    'border border-dark': selectedPostId === post.id
+  }"
+>
   <div class="card-body">
     <h5 class="card-title">{{ post.title }}</h5>
     <p class="card-text">{{ post.body }}</p>
