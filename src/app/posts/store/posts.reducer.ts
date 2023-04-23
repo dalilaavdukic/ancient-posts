@@ -1,49 +1,61 @@
 import { createReducer, on } from '@ngrx/store';
 import {
-  createPostMutationSuccess,
-  deletePostMutationSuccess,
-  postsAPIQuerySuccess,
+  createPostMutationCompleted,
+  deletePostMutationCompleted,
+  postsQueryCompleted,
+  setLoading,
   setSelectedPost,
-  updatePostMutationSuccess,
+  updatePostMutationCompleted,
 } from './posts.action';
 import { PostsFeatureState } from '@app/models/posts.feature.state.model';
 
 export const initialState: PostsFeatureState = {
   allPosts: [],
   selectedPost: undefined,
-  loading: true,
+  loading: false,
   error: undefined,
 };
 
 export const postsReducer = createReducer(
   initialState,
-  on(postsAPIQuerySuccess, (state, { allPosts, loading, error }) => {
+  on(postsQueryCompleted, (state, { allPosts, error }) => {
     return {
       ...state,
-      allPosts,
-      loading,
       error,
+      loading: false,
+      allPosts,
     };
   }),
-  on(createPostMutationSuccess, (state, { newPost }) => {
+  on(createPostMutationCompleted, (state, { newPost, error }) => {
+    const newPosts = newPost ? [newPost, ...state.allPosts] : state.allPosts;
     return {
       ...state,
-      allPosts: [newPost, ...state.allPosts],
+      loading: false,
+      error,
+      selectedPost: newPost,
+      allPosts: newPosts,
     };
   }),
-  on(updatePostMutationSuccess, (state, { updatePost }) => {
-    let newPostsState = state.allPosts.filter(
-      (post) => post.id !== updatePost.id
-    );
-    newPostsState.unshift(updatePost);
+  on(updatePostMutationCompleted, (state, { updatePost, error }) => {
+    let newPosts = state.allPosts;
+    if (updatePost) {
+      newPosts = [
+        updatePost,
+        ...state.allPosts.filter((post) => post.id !== updatePost?.id),
+      ];
+    }
     return {
       ...state,
-      allPosts: newPostsState,
+      error,
+      loading: false,
+      allPosts: newPosts,
     };
   }),
-  on(deletePostMutationSuccess, (state, { id }) => {
+  on(deletePostMutationCompleted, (state, { id, error }) => {
     return {
       ...state,
+      error,
+      loading: false,
       allPosts: state.allPosts.filter((post) => post.id !== id),
     };
   }),
@@ -51,6 +63,12 @@ export const postsReducer = createReducer(
     return {
       ...state,
       selectedPost: post,
+    };
+  }),
+  on(setLoading, (state, { loading }) => {
+    return {
+      ...state,
+      loading,
     };
   })
 );

@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
-import {
-  ApolloError,
-  ApolloQueryResult,
-  NetworkStatus,
-} from '@apollo/client/core';
+import { ApolloError } from '@apollo/client/core';
 import { Mutations } from '@app/graphql/posts.mutations';
 import { Queries } from '@app/graphql/posts.queries';
 import { Post } from '@app/models/post.model';
-import { Apollo, MutationResult } from 'apollo-angular';
+import { Result } from '@app/models/result.model';
+import { Apollo } from 'apollo-angular';
 import { Observable, catchError, map, of } from 'rxjs';
 
 @Injectable({
@@ -16,25 +13,24 @@ import { Observable, catchError, map, of } from 'rxjs';
 export class PostsService {
   constructor(private apollo: Apollo) {}
 
-  getAllPosts(): Observable<ApolloQueryResult<Post[]>> {
+  private handleError(error: ApolloError) {
+    return of({
+      error,
+    });
+  }
+
+  getAllPosts(): Observable<Result<Post[]>> {
     return this.apollo
       .watchQuery<any>({
         query: Queries.GET_POSTS,
       })
       .valueChanges.pipe(
-        map((result) => ({ ...result, data: result.data?.posts?.data })),
-        catchError((error: ApolloError) => {
-          return of({
-            data: [],
-            error,
-            loading: false,
-            networkStatus: NetworkStatus.error,
-          });
-        })
+        map((result) => ({ data: result.data?.posts?.data })),
+        catchError((error) => this.handleError(error))
       );
   }
 
-  createPost(post: Post): Observable<MutationResult<Post>> {
+  createPost(post: Post): Observable<Result<Post>> {
     return this.apollo
       .mutate<any>({
         mutation: Mutations.CREATE_POST,
@@ -43,22 +39,33 @@ export class PostsService {
           body: post.body,
         },
       })
-      .pipe(map((result) => ({ ...result, data: result?.data?.createPost })));
+      .pipe(
+        map((result) => ({ data: result?.data?.createPost })),
+        catchError((error) => this.handleError(error))
+      );
   }
 
-  updatePost(post: Post): Observable<MutationResult<Post>> {
+  updatePost(post: Post): Observable<Result<Post>> {
     return this.apollo
       .mutate<any>({
         mutation: Mutations.UPDATE_POST,
         variables: { ...post },
       })
-      .pipe(map((result) => ({ ...result, data: result?.data?.updatePost })));
+      .pipe(
+        map((result) => ({ data: result?.data?.updatePost })),
+        catchError((error) => this.handleError(error))
+      );
   }
 
-  deletePost(id: string) {
-    return this.apollo.mutate<any>({
-      mutation: Mutations.DELETE_POST,
-      variables: { id },
-    });
+  deletePost(id: string): Observable<Result<any>> {
+    return this.apollo
+      .mutate<any>({
+        mutation: Mutations.DELETE_POST,
+        variables: { id },
+      })
+      .pipe(
+        map(() => ({ data: id })),
+        catchError((error) => this.handleError(error))
+      );
   }
 }

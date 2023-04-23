@@ -5,7 +5,12 @@
     <button (click)="editPost()" type="button" class="btn btn-success">
       Edit
     </button>
-    <button (click)="deletePost()" type="button" class="btn btn-danger ms-2">
+    <button
+      [disabled]="selectedPostId === post.id"
+      (click)="deletePost()"
+      type="button"
+      class="btn btn-danger ms-2"
+    >
       Delete
     </button>
   </div>

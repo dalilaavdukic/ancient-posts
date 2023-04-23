@@ -3,14 +3,15 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { PostsService } from '../posts.service';
 import {
-  createPostMutationSuccess,
-  deletePostMutationSuccess,
+  createPostMutationCompleted,
+  deletePostMutationCompleted,
   invokeCreatePostMutation,
   invokeDeletePostMutation,
   invokePostsQuery,
   invokeUpdatePostMutation,
-  postsAPIQuerySuccess,
-  updatePostMutationSuccess,
+  postsQueryCompleted,
+  setLoading,
+  updatePostMutationCompleted,
 } from './posts.action';
 import { EMPTY, map, mergeMap, switchMap, withLatestFrom } from 'rxjs';
 import { selectPosts } from './posts.selector';
@@ -28,14 +29,15 @@ export class PostsEffect {
       ofType(invokePostsQuery),
       withLatestFrom(this.store.pipe(select(selectPosts))),
       mergeMap(([, postsFromStore]) => {
+        this.store.dispatch(setLoading({ loading: true }));
         if (postsFromStore.allPosts.length > 0) {
           return EMPTY;
         }
         return this.postsService
           .getAllPosts()
           .pipe(
-            map(({ data, loading, error }) =>
-              postsAPIQuerySuccess({ allPosts: data, loading, error })
+            map(({ data, error }) =>
+              postsQueryCompleted({ allPosts: data || [], error })
             )
           );
       })
@@ -45,41 +47,49 @@ export class PostsEffect {
   createPost$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(invokeCreatePostMutation),
-      switchMap((action) =>
-        this.postsService
+      switchMap((action) => {
+        this.store.dispatch(setLoading({ loading: true }));
+        return this.postsService
           .createPost(action.newPost)
           .pipe(
-            map((result) =>
-              createPostMutationSuccess({ newPost: result.data! })
+            map(({ data, error }) =>
+              createPostMutationCompleted({ newPost: data, error })
             )
-          )
-      )
+          );
+      })
     );
   });
 
   deletePost$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(invokeDeletePostMutation),
-      switchMap((action) =>
-        this.postsService
-          .deletePost(action.id)
-          .pipe(map(() => deletePostMutationSuccess({ id: action.id })))
-      )
+      switchMap((action) => {
+        this.store.dispatch(setLoading({ loading: true }));
+        return this.postsService.deletePost(action.id).pipe(
+          map(({ data, error }) =>
+            deletePostMutationCompleted({
+              id: data,
+              error,
+            })
+          )
+        );
+      })
     );
   });
 
   updatePost$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(invokeUpdatePostMutation),
-      switchMap((action) =>
-        this.postsService
+      switchMap((action) => {
+        this.store.dispatch(setLoading({ loading: true }));
+        return this.postsService
           .updatePost(action.updatePost)
           .pipe(
-            map((result) =>
-              updatePostMutationSuccess({ updatePost: result.data! })
+            map(({ data, error }) =>
+              updatePostMutationCompleted({ updatePost: data, error })
             )
-          )
-      )
+          );
+      })
     );
   });
 }

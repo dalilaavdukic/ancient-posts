@@ -1,5 +1,1 @@
-<div *ngIf="!loading && !error">
-  <app-post-details *ngFor="let post of posts" [post]="post"></app-post-details>
-</div>
-<div *ngIf="error">An error occured</div>
-<div *ngIf="loading">Loading...</div>
+<app-post-details *ngFor="let post of posts" [post]="post"></app-post-details>

@@ -1,12 +1,12 @@
 import { createAction, props } from '@ngrx/store';
 import { Post } from '@app/models/post.model';
-import { PostsFeatureState } from '@app/models/posts.feature.state.model';
+import { ApolloError } from '@apollo/client/errors';
 
 export const invokePostsQuery = createAction('[Posts API] Invoke posts query');
 
-export const postsAPIQuerySuccess = createAction(
-  '[Posts API] API posts query success',
-  props<PostsFeatureState>()
+export const postsQueryCompleted = createAction(
+  '[Posts API] API posts query completed',
+  props<{ allPosts: Post[]; error?: ApolloError }>()
 );
 
 export const invokeCreatePostMutation = createAction(
@@ -14,9 +14,9 @@ export const invokeCreatePostMutation = createAction(
   props<{ newPost: Post }>()
 );
 
-export const createPostMutationSuccess = createAction(
-  '[Posts API] Create new post mutation success',
-  props<{ newPost: Post }>()
+export const createPostMutationCompleted = createAction(
+  '[Posts API] Create new post mutation completed',
+  props<{ newPost?: Post; error?: ApolloError }>()
 );
 
 export const invokeUpdatePostMutation = createAction(
@@ -24,9 +24,9 @@ export const invokeUpdatePostMutation = createAction(
   props<{ updatePost: Post }>()
 );
 
-export const updatePostMutationSuccess = createAction(
-  '[Posts API] Update post mutation success',
-  props<{ updatePost: Post }>()
+export const updatePostMutationCompleted = createAction(
+  '[Posts API] Update post mutation completed',
+  props<{ updatePost?: Post; error?: ApolloError }>()
 );
 
 export const invokeDeletePostMutation = createAction(
@@ -34,12 +34,17 @@ export const invokeDeletePostMutation = createAction(
   props<{ id: string }>()
 );
 
-export const deletePostMutationSuccess = createAction(
-  '[Posts API] deleted post mutation success',
-  props<{ id: string }>()
+export const deletePostMutationCompleted = createAction(
+  '[Posts API] delete post mutation completed',
+  props<{ id: string; error?: ApolloError }>()
 );
 
 export const setSelectedPost = createAction(
   '[Post Details] Select post',
   props<{ post: Post | undefined }>()
+);
+
+export const setLoading = createAction(
+  '[Posts API] Set loading',
+  props<{ loading: boolean }>()
 );

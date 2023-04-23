@@ -19,7 +19,6 @@ import { Post } from '@app/models/post.model';
 @Component({
   selector: 'app-post-form',
   templateUrl: './post-form.component.html',
-  styleUrls: ['./post-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostFormComponent implements OnInit, OnDestroy {
@@ -33,7 +32,7 @@ export class PostFormComponent implements OnInit, OnDestroy {
   storeSubscription: Subscription;
   post?: Post;
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.storeSubscription = this.store
       .pipe(select(selectPost))
       .subscribe((selectedPost) => {

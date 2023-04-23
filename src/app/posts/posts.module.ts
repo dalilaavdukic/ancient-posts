@@ -9,15 +9,21 @@ import { PostsListComponent } from './posts-list/posts-list.component';
 import { PostFormComponent } from './post-form/post-form.component';
 import { PostDetailsComponent } from './post-details/post-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { PostsDashboardComponent } from './posts-dashboard/posts-dashboard.component';
 
 @NgModule({
-  declarations: [PostsListComponent, PostFormComponent, PostDetailsComponent],
+  declarations: [
+    PostsListComponent,
+    PostFormComponent,
+    PostDetailsComponent,
+    PostsDashboardComponent,
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     StoreModule.forFeature(POSTS, postsReducer),
     EffectsModule.forFeature([PostsEffect]),
   ],
-  exports: [PostsListComponent, PostFormComponent],
+  exports: [PostsDashboardComponent],
 })
 export class PostsModule {}

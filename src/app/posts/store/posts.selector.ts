@@ -7,3 +7,7 @@ export const selectPost = createSelector(
   selectPosts,
   (state) => state.selectedPost
 );
+export const selectLoading = createSelector(
+  selectPosts,
+  (state) => state.loading
+);

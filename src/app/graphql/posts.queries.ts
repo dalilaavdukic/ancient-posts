@@ -4,7 +4,7 @@ export class Queries {
   public static get GET_POSTS() {
     return gql`
       {
-        posts(options: { paginate: { page: 1, limit: 15 } }) {
+        posts {
           data {
             id
             title
