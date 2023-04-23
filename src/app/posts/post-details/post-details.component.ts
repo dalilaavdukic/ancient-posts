@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Post } from '@app/models/post.model';
-import { invokeDeletePostMutation } from '../store/posts.action';
+import {
+  invokeDeletePostMutation,
+  setSelectedPost,
+} from '../store/posts.action';
 
 @Component({
   selector: 'app-post-details',
@@ -18,6 +21,14 @@ export class PostDetailsComponent {
     this.store.dispatch(
       invokeDeletePostMutation({
         id: this.post.id!,
+      })
+    );
+  }
+
+  editPost() {
+    this.store.dispatch(
+      setSelectedPost({
+        post: this.post,
       })
     );
   }

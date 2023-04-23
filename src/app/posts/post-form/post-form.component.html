@@ -15,11 +15,18 @@
       id="body"
       type="text"
       formControlName="body"
-      rows="3"
+      rows="6"
     ></textarea>
   </div>
   <button [disabled]="postForm.invalid" class="btn btn-primary" type="submit">
-    Save Post
+    {{ post?.id ? "Save Cahnges" : "Add Post" }}
   </button>
-  <button class="btn btn-light ms-2" type="button">Cancel</button>
+  <button
+    *ngIf="post?.id"
+    (click)="onCancel()"
+    class="btn btn-light ms-2"
+    type="button"
+  >
+    Cancel
+  </button>
 </form>

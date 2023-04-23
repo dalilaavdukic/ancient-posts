@@ -46,6 +46,15 @@ export class PostsService {
       .pipe(map((result) => ({ ...result, data: result?.data?.createPost })));
   }
 
+  updatePost(post: Post): Observable<MutationResult<Post>> {
+    return this.apollo
+      .mutate<any>({
+        mutation: Mutations.UPDATE_POST,
+        variables: { ...post },
+      })
+      .pipe(map((result) => ({ ...result, data: result?.data?.updatePost })));
+  }
+
   deletePost(id: string) {
     return this.apollo.mutate<any>({
       mutation: Mutations.DELETE_POST,

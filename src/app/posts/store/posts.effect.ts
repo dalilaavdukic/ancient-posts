@@ -3,12 +3,14 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { PostsService } from '../posts.service';
 import {
-  createPostMutationSucess,
+  createPostMutationSuccess,
   deletePostMutationSuccess,
   invokeCreatePostMutation,
   invokeDeletePostMutation,
   invokePostsQuery,
+  invokeUpdatePostMutation,
   postsAPIQuerySuccess,
+  updatePostMutationSuccess,
 } from './posts.action';
 import { EMPTY, map, mergeMap, switchMap, withLatestFrom } from 'rxjs';
 import { selectPosts } from './posts.selector';
@@ -43,26 +45,41 @@ export class PostsEffect {
   createPost$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(invokeCreatePostMutation),
-      mergeMap((action) => {
-        return this.postsService.createPost(action.newPost).pipe(
-          map((result) => {
-            return createPostMutationSucess({ newPost: result.data! });
-          })
-        );
-      })
+      switchMap((action) =>
+        this.postsService
+          .createPost(action.newPost)
+          .pipe(
+            map((result) =>
+              createPostMutationSuccess({ newPost: result.data! })
+            )
+          )
+      )
     );
   });
 
   deletePost$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(invokeDeletePostMutation),
-      mergeMap((action) => {
-        return this.postsService.deletePost(action.id).pipe(
-          map(() => {
-            return deletePostMutationSuccess({ id: action.id });
-          })
-        );
-      })
+      switchMap((action) =>
+        this.postsService
+          .deletePost(action.id)
+          .pipe(map(() => deletePostMutationSuccess({ id: action.id })))
+      )
+    );
+  });
+
+  updatePost$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(invokeUpdatePostMutation),
+      switchMap((action) =>
+        this.postsService
+          .updatePost(action.updatePost)
+          .pipe(
+            map((result) =>
+              updatePostMutationSuccess({ updatePost: result.data! })
+            )
+          )
+      )
     );
   });
 }

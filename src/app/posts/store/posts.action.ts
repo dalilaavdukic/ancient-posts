@@ -14,9 +14,19 @@ export const invokeCreatePostMutation = createAction(
   props<{ newPost: Post }>()
 );
 
-export const createPostMutationSucess = createAction(
+export const createPostMutationSuccess = createAction(
   '[Posts API] Create new post mutation success',
   props<{ newPost: Post }>()
+);
+
+export const invokeUpdatePostMutation = createAction(
+  '[Posts API] Inovke update post mutation',
+  props<{ updatePost: Post }>()
+);
+
+export const updatePostMutationSuccess = createAction(
+  '[Posts API] Update post mutation success',
+  props<{ updatePost: Post }>()
 );
 
 export const invokeDeletePostMutation = createAction(
@@ -27,4 +37,9 @@ export const invokeDeletePostMutation = createAction(
 export const deletePostMutationSuccess = createAction(
   '[Posts API] deleted post mutation success',
   props<{ id: string }>()
+);
+
+export const setSelectedPost = createAction(
+  '[Post Details] Select post',
+  props<{ post: Post | undefined }>()
 );
