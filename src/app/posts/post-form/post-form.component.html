@@ -1,0 +1,25 @@
+<form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label class="form-label" for="title">Title</label>
+    <input
+      class="form-control"
+      id="title"
+      type="text"
+      formControlName="title"
+    />
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="body">Body</label>
+    <textarea
+      class="form-control"
+      id="body"
+      type="text"
+      formControlName="body"
+      rows="3"
+    ></textarea>
+  </div>
+  <button [disabled]="postForm.invalid" class="btn btn-primary" type="submit">
+    Save Post
+  </button>
+  <button class="btn btn-light ms-2" type="button">Cancel</button>
+</form>
